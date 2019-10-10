@@ -21,6 +21,14 @@ void setup()
   motor1.run(RELEASE);
   motor2.run(RELEASE);
 }
+int cantInstrucciones(String s) {
+  int cont = 1;
+  for (int i = 0 ; i < s.length() ; i++) {
+    if (s.charAt(i) == ',')
+      cont++;
+  }
+  return cont;
+}
 void moverDerecha() {
   motor1.run(FORWARD);
   motor2.run(BACKWARD);
@@ -100,49 +108,69 @@ String getAccion(String accion) {
 void loop()
 {
   if (Serial.available()) {
-    String accion = Serial.readStringUntil('\n');
-    int seg = getSegundos(accion);
-    accion = getAccion(accion);
+    String instrucciones = Serial.readStringUntil('\n');
+    String acciones[cantInstrucciones(instrucciones)];
+    String accionTemp = "";
+    int numInstruccion = 0;
+    for (int i = 0; i < instrucciones.length() ; i++) {
+      if (instrucciones.charAt(i) != ',') {
+        accionTemp += instrucciones.charAt(i);
+      }
+      else {
+        Serial.println(accionTemp);
+        acciones[numInstruccion] = accionTemp;
+        accionTemp = "";
+        numInstruccion++;
+      }
+    }
+    
 
-    if (accion.equals("avanzar")) {
-      avanzar();
-      if (seg == 0) {
-        delay(1000);
+    for (int j = 0; j < sizeof(acciones); j++) {
+      String accion = acciones[j];
+      int seg = getSegundos(accion);
+      accion = getAccion(accion);
+
+      if (accion.equals("avanzar")) {
+        avanzar();
+        if (seg == 0) {
+          delay(1000);
+        }
+        else {
+          delay(seg);
+        }
       }
-      else {
-        delay(seg);
+      else if (accion.equals("atras")) {
+        retroceder();
+        if (seg == 0) {
+          delay(1000);
+        }
+        else {
+          delay(seg);
+        }
       }
+      if (accion.equals("izquierda")) {
+        moverIzquierda();
+        if (seg == 0) {
+          delay(1000);
+        }
+        else {
+          delay(seg);
+        }
+      }
+      if (accion.equals("derecha")) {
+        moverDerecha();
+        if (seg == 0) {
+          delay(1000);
+        }
+        else {
+          delay(seg);
+        }
+      }
+      else if (accion.equals("distancia")) {
+        printDistancia();
+      }
+      detener();
+      delay(100);
     }
-    else if (accion.equals("atras")) {
-      retroceder();
-      if (seg == 0) {
-        delay(1000);
-      }
-      else {
-        delay(seg);
-      }
-    }
-    if (accion.equals("izquierda")) {
-      moverIzquierda();
-      if (seg == 0) {
-        delay(1000);
-      }
-      else {
-        delay(seg);
-      }
-    }
-    if (accion.equals("derecha")) {
-      moverDerecha();
-      if (seg == 0) {
-        delay(1000);
-      }
-      else {
-        delay(seg);
-      }
-    }
-    else if (accion.equals("distancia")) {
-      printDistancia();
-    }
-    detener();
   }
 }
