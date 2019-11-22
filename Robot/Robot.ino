@@ -1,8 +1,8 @@
 #include <NewPing.h>
 #include <AFMotor.h>
 
-AF_DCMotor motor1(1, 0);
-AF_DCMotor motor2(2, 0);
+AF_DCMotor motor1(3, 0);
+AF_DCMotor motor2(4, 0);
 
 #define trigPin A0
 #define echoPin A1
@@ -12,7 +12,7 @@ String segundos = "";
 void setup()
 {
   Serial.begin(9600);           // set up Serial library at 9600 bps
-  Serial.println("Joda de motor!");
+  Serial.println("V-1.0");
 
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
@@ -117,6 +117,7 @@ void loop()
         accionTemp += instrucciones.charAt(i);
       }
       else {
+        Serial.println("hola");
         Serial.println(accionTemp);
         acciones[numInstruccion] = accionTemp;
         accionTemp = "";
